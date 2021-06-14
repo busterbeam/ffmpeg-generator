@@ -174,19 +174,17 @@ v_input.overlay(i_input, x=30, y=30).output(
 ```python
 from ffmpeg import run_ffplay
 
-_ = run_ffplay("allrgb", f="lavfi")
-_ = run_ffplay("allyuv", f="lavfi")
-_ = run_ffplay("color=c=red@0.2:s=1600x900:r=10", f="lavfi")
-_ = run_ffplay("haldclutsrc", f="lavfi")
-_ = run_ffplay("pal75bars", f="lavfi")
-_ = run_ffplay("allyuv", f="lavfi")
-_ = run_ffplay("allyuv", f="lavfi")
-_ = run_ffplay("rgbtestsrc=size=900x600:rate=60", f="lavfi")
-_ = run_ffplay("smptebars=size=900x600:rate=60", f="lavfi")
-_ = run_ffplay("smptehdbars=size=900x600:rate=60", f="lavfi")
-_ = run_ffplay("testsrc=size=900x600:rate=60", f="lavfi")
-_ = run_ffplay("testsrc2=s=900x600:rate=60", f="lavfi")
-_ = run_ffplay("yuvtestsrc=s=900x600:rate=60", f="lavfi")
+for color in ["rgb", "yuv"]:
+    run_ffplay(f"all{color}", f = "lavfi")
+    run_ffplay(f"all{color}", f = "lavfi")
+
+run_ffplay("color=c=red@0.2:s=1600x900:r=10", f = "lavfi")
+run_ffplay("haldclutsrc", f = "lavfi")
+run_ffplay("pal75bars", f = "lavfi")
+for _ in range(2): run_ffplay("allyuv", f = "lavfi")
+
+for x in ["rgbtestsrc","smptebars","smptehdbars","testsrc","testsrc2","yuvtestsrc"]:
+    run_ffplay(f"{x}=size=900x600:rate=60", f = "lavfi")
 ```
 
 ### Preview by FFmpeg
@@ -194,8 +192,8 @@ _ = run_ffplay("yuvtestsrc=s=900x600:rate=60", f="lavfi")
 ```python
 from ffmpeg import input_source
 
-_ = input_source("testsrc", size="900x600", rate=60).output(preview=True).run_async()
-_ = input_source("testsrc2", size="900x600", rate=60).output(preview=True).run_async()
+for i in range(2):
+    input_source(f"testsrc{i}", size="900x600", rate=60).output(preview=True).run_async()
 ```
 
 ### Save Video from video sources
@@ -203,7 +201,7 @@ _ = input_source("testsrc2", size="900x600", rate=60).output(preview=True).run_a
 ```python
 from ffmpeg import input_source
 
-_ = input_source("testsrc", size="900x600", rate=60, duration=30).output("source_testsrc.mp4").run()
+input_source("testsrc", size="900x600", rate=60, duration=30).output("source_testsrc.mp4").run()
 ```
 
 ## More Examples
@@ -246,7 +244,7 @@ ffplay_video(data.V1, vf='transpose=1,setpts=PTS/2', af='atempo=2')
 ```python
 from ffmpeg import vtools
 
-vtools.generate_video_thumbnail(src="src", dst="dst", start_position=3, width=400, height=-1)
+vtools.generate_video_thumbnail(src = "src", dst = "dst", start_position = 3, width = 400, height = -1)
 ```
 
 ### Convert Video to Numpy Array
